@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Artist Search</title>
+</head>
+<body>
+    <h1>Spotify Artist Search</h1>
+    <input type="text" id="artist" placeholder="Enter artist name">
+    <button onclick="searchArtist()">Search</button>
+    <ul id="songs"></ul>
+
+    <script>
+        function searchArtist() {
+            const artist = document.getElementById('artist').value;
+            fetch(`/search?artist=${artist}`)
+                .then(response => response.json())
+                .then(data => {
+                    const songList = document.getElementById('songs');
+                    songList.innerHTML = '';
+                    if (data.error) {
+                        songList.innerHTML = `<li>${data.error}</li>`;
+                    } else {
+                        data.forEach(song => {
+                            songList.innerHTML += `<li>${song}</li>`;
+                        });
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
