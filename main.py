@@ -61,10 +61,17 @@ def get_songs_by_artist(token, artist_id):
         print("No tracks found for this artist...")
         return None
 
+def print_song_names(songs):
+    if songs:
+        print("Top Tracks:")
+        for i, song in enumerate(songs):
+            print(f"{i+1}. {song['name']}")
+    else:
+        print("No songs available.")
+
 token = get_token()
 result = search_for_artist(token, "Glowboy ✨")
 if result:
     artist_id = result["id"]
     songs = get_songs_by_artist(token, artist_id)
-    if songs:
-        print(songs)
+    print_song_names(songs)
