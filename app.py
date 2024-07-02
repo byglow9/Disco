@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
