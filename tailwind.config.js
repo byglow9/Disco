@@ -5,7 +5,14 @@ module.exports = {
     './static/css/**/*.css',
   ],
     theme: {
-    extend: {},
+      extend: {
+        colors: {
+         'custom-disco':'#d7e334',
+         'custom-disco2':'#B459B0'
+         ,
+        },
+      },
   },
   plugins: [],
 }
+

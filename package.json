@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "build:css": "tailwindcss build static/css/input.css -o static/css/output.css"
+         "build:css": "tailwindcss build static/css/input.css -o static/css/output.css"
     }
   }
   
