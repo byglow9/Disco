@@ -69,24 +69,18 @@ def index():
 
 @app.route('/search')
 def search():
-    try:
-        artist_name = request.args.get('artist_name')
-        if not artist_name:
-            return jsonify({'error': 'No artist name provided'}), 400
-        
-        token = get_token()
-        artist = search_for_artist(token, artist_name)
-        if not artist:
-            return jsonify({'error': 'Artist not found'}), 404
-        
-        artist_id = artist['id']
+    artist_name = request.args.get('artist_name')
+    token = get_token()
+    result = search_for_artist(token, artist_name)
+    if result:
+        artist_id = result["id"]
         songs = get_songs_by_artist(token, artist_id)
-        if not songs:
-            return jsonify({'error': 'No songs found for this artist'}), 404
-        
-        return jsonify({'songs': songs})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        if songs:
+            return jsonify(songs=songs)
+        else:
+            return jsonify(error="No songs found for this artist.")
+    else:
+        return jsonify(error="Artist not found.")
 
 if __name__ == '__main__':
     app.run(debug=True)
