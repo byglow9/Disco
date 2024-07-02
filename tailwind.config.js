@@ -11,6 +11,9 @@ module.exports = {
          'custom-disco2':'#B459B0'
          ,
         },
+        fontFamily: {
+          'lalezar': ['Lalezar', 'system-ui'],
+        }
       },
   },
   plugins: [],
