@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, send_from_directory, request, jsonify, render_template
+from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import base64
@@ -7,10 +8,11 @@ import json
 
 load_dotenv()
 
-app = Flask(__name__, static_folder='static', static_url_path='')
-
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
+
+app = Flask(__name__)
+CORS(app)  # Adiciona suporte a CORS
 
 def get_token():
     auth_string = client_id + ":" + client_secret
@@ -46,12 +48,10 @@ def search_for_artist(token, artist_name):
         if len(artists) > 0:
             return artists[0]  # Retorna o primeiro artista encontrado
         else:
-            print("No artist with this name exists...")
             return None
     else:
-        print("Unexpected response format from Spotify API")
         return None
-    
+
 def get_songs_by_artist(token, artist_id):
     url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?country=US"
     headers = get_auth_header(token)
@@ -59,29 +59,28 @@ def get_songs_by_artist(token, artist_id):
     json_result = json.loads(result.content)
     
     if "tracks" in json_result:
-        return json_result["tracks"]
+        return [track["name"] for track in json_result["tracks"]]
     else:
-        print("No tracks found for this artist...")
         return None
 
-@app.route('/search', methods=['GET'])
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/search')
 def search():
-    artist_name = request.args.get('artist')
+    artist_name = request.args.get('artist_name')
     token = get_token()
     result = search_for_artist(token, artist_name)
     if result:
         artist_id = result["id"]
         songs = get_songs_by_artist(token, artist_id)
         if songs:
-            return jsonify([song['name'] for song in songs])
+            return jsonify(songs=songs)
         else:
-            return jsonify({"error": "No tracks found for this artist."}), 404
+            return jsonify(error="No songs found for this artist.")
     else:
-        return jsonify({"error": "Artist not found."}), 404
-
-@app.route('/')
-def serve_index():
-    return send_from_directory(app.static_folder, 'index.html')
+        return jsonify(error="Artist not found.")
 
 if __name__ == '__main__':
     app.run(debug=True)
